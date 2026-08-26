@@ -9,7 +9,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Analysis result is required" }, { status: 400 });
     }
 
-    const apiKey = process.env.NARA_API_KEY;
+    // Menggunakan API Key yang diberikan (hardcoded untuk kemudahan deploy Netlify)
+    const apiKey = process.env.NARA_API_KEY || "sk-nry-acDQg2dz38mhOwno_ttdAQY8ntm4ByTGfluIxPGE1jA";
+    
     if (!apiKey) {
       return NextResponse.json({ error: "NARA_API_KEY is not configured" }, { status: 500 });
     }
