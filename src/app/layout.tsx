@@ -12,6 +12,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import Sidebar from "@/components/Sidebar";
+
 export const metadata: Metadata = {
   title: "AI Website Analyzer",
   description: "Audit website dengan teknologi AI",
@@ -23,7 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-[#0b0f19] text-slate-100">{children}</body>
+      <body className="min-h-full flex bg-[#0b0f19] text-slate-100">
+        <Sidebar />
+        <main className="flex-1 ml-72 min-h-screen">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

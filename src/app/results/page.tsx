@@ -77,18 +77,15 @@ function ResultsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20 pb-20">
-      {/* Header */}
-      <header className="bg-background border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="font-bold text-lg">AI Website Analyzer</div>
-          <div className="text-sm text-muted-foreground truncate max-w-[200px] md:max-w-md">
+    <div className="min-h-screen bg-[#0b0f19] pb-20">
+      <main className="p-8 space-y-8 max-w-6xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-2">Hasil Analisis</h1>
+          <p className="text-sm text-slate-400 truncate max-w-full">
             {data.url}
-          </div>
+          </p>
         </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
         {/* Top Section: Overall Score & Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1">
@@ -102,29 +99,29 @@ function ResultsContent() {
             <ScoreCard 
               title="SEO" 
               score={data.categories.seo.score} 
-              icon={<SearchCheck className="w-4 h-4 text-muted-foreground" />} 
+              icon={<SearchCheck className="w-4 h-4 text-slate-400" />} 
             />
             <ScoreCard 
               title="Performance" 
               score={data.categories.performance.score} 
-              icon={<Zap className="w-4 h-4 text-muted-foreground" />} 
+              icon={<Zap className="w-4 h-4 text-slate-400" />} 
             />
             <ScoreCard 
               title="Accessibility" 
               score={data.categories.accessibility.score} 
-              icon={<BarChart3 className="w-4 h-4 text-muted-foreground" />} 
+              icon={<BarChart3 className="w-4 h-4 text-slate-400" />} 
             />
             <ScoreCard 
-              title="Security" 
+              title="Security & Best Practices" 
               score={data.categories.security.score} 
-              icon={<ShieldCheck className="w-4 h-4 text-muted-foreground" />} 
+              icon={<ShieldCheck className="w-4 h-4 text-slate-400" />} 
             />
           </div>
         </div>
 
         {/* Detailed Findings */}
         <div className="space-y-6">
-          <h3 className="text-2xl font-bold tracking-tight">Detail Temuan</h3>
+          <h3 className="text-xl font-bold text-slate-200 mt-8 mb-4">Detail Temuan</h3>
           
           <CategorySection title="SEO Analysis" result={data.categories.seo} />
           <CategorySection title="Performance" result={data.categories.performance} />
