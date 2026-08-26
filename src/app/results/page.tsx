@@ -1,0 +1,205 @@
+"use client";
+
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { AnalysisResult } from "@/lib/scoring";
+import ScoreCard from "@/components/ScoreCard";
+import AIRecommendations from "@/components/AIRecommendations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SearchCheck, Zap, BarChart3, ShieldCheck, Loader2, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+
+function ResultsContent() {
+  const searchParams = useSearchParams();
+  const url = searchParams.get("url");
+
+  const [data, setData] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!url) {
+      setError("URL tidak ditemukan.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Gagal melakukan analisis.");
+        }
+
+        const resultData = await res.json();
+        setData(resultData);
+      } catch (err: any) {
+        setError(err.message || "Terjadi kesalahan yang tidak terduga.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        <h2 className="text-xl font-medium">Menganalisis {url}...</h2>
+        <p className="text-muted-foreground text-sm">Ini mungkin memakan waktu beberapa detik.</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full p-6 bg-red-50/50 border border-red-200 rounded-xl text-center space-y-4">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
+          <h2 className="text-xl font-semibold text-red-700">Gagal Menganalisis</h2>
+          <p className="text-red-600/80 text-sm">{error}</p>
+          <button 
+            onClick={() => window.history.back()}
+            className="px-4 py-2 bg-red-100 text-red-700 rounded-md font-medium hover:bg-red-200 transition-colors"
+          >
+            Kembali
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-muted/20 pb-20">
+      {/* Header */}
+      <header className="bg-background border-b sticky top-0 z-10">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="font-bold text-lg">AI Website Analyzer</div>
+          <div className="text-sm text-muted-foreground truncate max-w-[200px] md:max-w-md">
+            {data.url}
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8 space-y-8 max-w-6xl">
+        {/* Top Section: Overall Score & Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-1">
+            <ScoreCard 
+              title="Overall Score" 
+              score={data.overallScore} 
+              size="lg" 
+            />
+          </div>
+          <div className="md:col-span-2 grid grid-cols-2 gap-4">
+            <ScoreCard 
+              title="SEO" 
+              score={data.categories.seo.score} 
+              icon={<SearchCheck className="w-4 h-4 text-muted-foreground" />} 
+            />
+            <ScoreCard 
+              title="Performance" 
+              score={data.categories.performance.score} 
+              icon={<Zap className="w-4 h-4 text-muted-foreground" />} 
+            />
+            <ScoreCard 
+              title="Accessibility" 
+              score={data.categories.accessibility.score} 
+              icon={<BarChart3 className="w-4 h-4 text-muted-foreground" />} 
+            />
+            <ScoreCard 
+              title="Security" 
+              score={data.categories.security.score} 
+              icon={<ShieldCheck className="w-4 h-4 text-muted-foreground" />} 
+            />
+          </div>
+        </div>
+
+        {/* Detailed Findings */}
+        <div className="space-y-6">
+          <h3 className="text-2xl font-bold tracking-tight">Detail Temuan</h3>
+          
+          <CategorySection title="SEO Analysis" result={data.categories.seo} />
+          <CategorySection title="Performance" result={data.categories.performance} />
+          <CategorySection title="Accessibility" result={data.categories.accessibility} />
+          <CategorySection title="Security & Best Practices" result={data.categories.security} />
+        </div>
+
+        {/* AI Recommendations */}
+        <div className="mt-12">
+          <AIRecommendations analysisResult={data} />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        <h2 className="text-xl font-medium">Memuat...</h2>
+      </div>
+    }>
+      <ResultsContent />
+    </Suspense>
+  );
+}
+
+function CategorySection({ title, result }: { title: string, result: any }) {
+  if (!result || !result.findings) return null;
+
+  return (
+    <Card>
+      <CardHeader className="bg-muted/30 border-b">
+        <CardTitle className="text-lg flex justify-between items-center">
+          {title}
+          <span className="text-sm font-normal bg-background px-2 py-1 border rounded-md">Score: {result.score}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="divide-y">
+          {result.findings.map((finding: any, i: number) => (
+            <div key={i} className="p-4 flex items-start gap-3">
+              <div className="mt-0.5">
+                {finding.status === "pass" ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                ) : finding.status === "fail" ? (
+                  <XCircle className="w-5 h-5 text-red-500" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-yellow-500" />
+                )}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-medium text-sm">{finding.title}</h4>
+                <p className="text-sm text-muted-foreground mt-1">{finding.description}</p>
+              </div>
+              {finding.priority && finding.status !== 'pass' && (
+                <div className={`text-xs px-2 py-1 rounded border font-medium ${
+                  finding.priority === 'Critical' ? 'bg-red-100 text-red-700 border-red-200' :
+                  finding.priority === 'High' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                  'bg-yellow-100 text-yellow-700 border-yellow-200'
+                }`}>
+                  {finding.priority}
+                </div>
+              )}
+            </div>
+          ))}
+          {result.findings.length === 0 && (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              Tidak ada temuan.
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
