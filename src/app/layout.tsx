@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import Sidebar from "@/components/Sidebar";
+import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "AI Website Analyzer",
@@ -25,9 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex bg-[#0b0f19] text-slate-100">
-        <Sidebar />
-        <main className="flex-1 ml-72 min-h-screen">
+      <body className="min-h-full flex flex-col bg-[#0b0f19] text-slate-100">
+        <Navigation />
+        <main className="flex-1 w-full">
           {children}
         </main>
       </body>
