@@ -40,36 +40,30 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
 
   if (loading) {
     return (
-      <Card className="border-blue-200 bg-blue-50/30">
+      <Card className="border-slate-800 bg-[#111827]">
         <CardContent className="p-8 flex flex-col items-center justify-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <p className="text-sm font-medium text-blue-700 animate-pulse">Gemini AI sedang menganalisis temuan dan menyusun rekomendasi...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
+          <p className="text-sm font-medium text-slate-400 animate-pulse">NaraRouter AI sedang menganalisis temuan dan menyusun rekomendasi...</p>
         </CardContent>
       </Card>
     );
   }
 
+  // Jika terjadi error dari NaraRouter (misal: upstream error), kita sembunyikan saja komponennya
   if (error) {
-    return (
-      <Card className="border-red-200 bg-red-50/30">
-        <CardContent className="p-6 flex items-center space-x-3 text-red-700">
-          <AlertTriangle className="w-5 h-5" />
-          <p className="text-sm font-medium">{error}</p>
-        </CardContent>
-      </Card>
-    );
+    return null; 
   }
 
   return (
-    <Card className="border-blue-200 overflow-hidden shadow-md">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-        <CardTitle className="flex items-center space-x-2 text-lg">
-          <Sparkles className="w-5 h-5 text-yellow-300" />
-          <span>Rekomendasi AI Gemini</span>
+    <Card className="border-slate-800 overflow-hidden shadow-2xl bg-[#111827]">
+      <CardHeader className="bg-gradient-to-r from-teal-900/50 to-slate-800 border-b border-slate-800/50">
+        <CardTitle className="flex items-center space-x-2 text-lg text-white">
+          <Sparkles className="w-5 h-5 text-teal-400" />
+          <span>Rekomendasi AI</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="prose prose-sm md:prose-base max-w-none prose-blue prose-headings:font-semibold prose-a:text-blue-600">
+        <div className="prose prose-sm md:prose-base max-w-none prose-invert prose-headings:font-semibold prose-a:text-teal-400">
           <ReactMarkdown>{recommendations}</ReactMarkdown>
         </div>
       </CardContent>
