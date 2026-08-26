@@ -27,21 +27,15 @@ export default function Navigation() {
     },
     {
       name: "Riwayat Analisis",
-      href: "#",
+      href: "/history",
       icon: <History className="w-5 h-5" />,
       description: "Arsip Data Tersimpan"
     },
     {
       name: "Komparasi",
-      href: "#",
+      href: "/compare",
       icon: <PieChart className="w-5 h-5" />,
       description: "Bandingkan 2 Website"
-    },
-    {
-      name: "Pengaturan",
-      href: "#",
-      icon: <Settings className="w-5 h-5" />,
-      description: "Konfigurasi API Key"
     }
   ];
 
