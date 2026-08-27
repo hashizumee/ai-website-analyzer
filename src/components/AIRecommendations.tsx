@@ -10,31 +10,32 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const fetchAI = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/ai-recommendation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysisResult }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Gagal memuat AI.");
+      }
+
+      const data = await res.json();
+      setRecommendations(data.recommendations);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!analysisResult) return;
-
-    const fetchAI = async () => {
-      try {
-        const res = await fetch("/api/ai-recommendation", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ analysisResult }),
-        });
-
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Gagal memuat AI.");
-        }
-
-        const data = await res.json();
-        setRecommendations(data.recommendations);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAI();
   }, [analysisResult]);
 
@@ -49,9 +50,23 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
     );
   }
 
-  // Jika terjadi error dari NaraRouter (misal: upstream error), kita sembunyikan saja komponennya
   if (error) {
-    return null; 
+    return (
+      <Card className="border-slate-800 bg-[#111827]">
+        <CardContent className="p-6 flex flex-col items-center space-y-4 text-slate-400">
+          <div className="flex items-center space-x-3 text-red-400">
+            <AlertTriangle className="w-5 h-5" />
+            <p className="text-sm font-medium">Gagal memuat AI: {error}</p>
+          </div>
+          <button 
+            onClick={fetchAI}
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm transition-colors"
+          >
+            Coba Lagi
+          </button>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

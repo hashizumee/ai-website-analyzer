@@ -12,6 +12,7 @@ import { SearchCheck, Zap, BarChart3, ShieldCheck, Loader2, AlertCircle, CheckCi
 function ResultsContent() {
   const searchParams = useSearchParams();
   const url = searchParams.get("url");
+  const prdContext = searchParams.get("prdContext");
 
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ function ResultsContent() {
         const res = await fetch(`/api/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, prdContext }),
         });
 
         if (!res.ok) {
@@ -95,6 +96,17 @@ function ResultsContent() {
               {data.url}
             </p>
           </div>
+          
+          {data.isFallback && (
+            <div className="bg-amber-900/40 border border-amber-500/50 text-amber-200 px-4 py-2 rounded-lg flex items-center space-x-2">
+              <AlertCircle className="w-5 h-5 text-amber-400" />
+              <div>
+                <span className="font-bold text-sm block">SIMULATION MODE</span>
+                <span className="text-xs">Google PageSpeed API Quota Limit Reached. Menampilkan data dummy.</span>
+              </div>
+            </div>
+          )}
+
           <button 
             onClick={() => window.print()}
             className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-700 w-fit"

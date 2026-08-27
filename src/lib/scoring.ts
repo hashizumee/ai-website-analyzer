@@ -22,6 +22,8 @@ export interface AnalysisResult {
     accessibility: CategoryResult;
     security: CategoryResult;
   };
+  isFallback?: boolean;
+  prdContext?: string;
 }
 
 export function calculateOverallScore(categories: AnalysisResult['categories']): number {

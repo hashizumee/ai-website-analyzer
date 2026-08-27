@@ -36,11 +36,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ recommendations: "Tidak ada masalah signifikan yang ditemukan. Website Anda dalam kondisi sangat baik!" });
     }
 
+    const prdSection = analysisResult.prdContext 
+      ? `\nKonteks Tambahan (PRD / Deskripsi Aplikasi):\n"${analysisResult.prdContext}"\n\nInstruksi Tambahan: Harap evaluasi juga apakah metrik dan temuan di atas sudah sejalan dengan Konteks PRD ini.`
+      : "";
+
     const prompt = `
 Anda adalah seorang pakar Website (SEO, Performance, Security, Accessibility).
 Berikut adalah daftar masalah teknis dari website ${analysisResult.url} (Overall Score: ${analysisResult.overallScore}/100):
 
 ${JSON.stringify(issuesToFix, null, 2)}
+${prdSection}
 
 Tugas Anda:
 1. Analisis masalah di atas.

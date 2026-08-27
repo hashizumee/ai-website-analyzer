@@ -3,7 +3,7 @@ import { calculateOverallScore, AnalysisResult, CategoryResult, AnalysisFinding 
 
 export async function POST(req: Request) {
   try {
-    const { url } = await req.json();
+    const { url, prdContext } = await req.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -44,6 +44,8 @@ export async function POST(req: Request) {
         url: validUrl.toString(),
         timestamp: new Date().toISOString(),
         overallScore: 82,
+        isFallback: true,
+        prdContext: prdContext || "",
         categories: {
           seo: {
             score: 90,
@@ -156,7 +158,8 @@ export async function POST(req: Request) {
       url: validUrl.toString(),
       timestamp: new Date().toISOString(),
       overallScore,
-      categories
+      categories,
+      prdContext: prdContext || ""
     };
 
     return NextResponse.json(result);
