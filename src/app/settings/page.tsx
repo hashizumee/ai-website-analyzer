@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Key, CheckCircle2 } from "lucide-react";
+import { Settings, Key, CheckCircle2, Webhook, Bell } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { saveWebhookSettings, getWebhookSettings } from "./webhook-actions";
 
 export default function SettingsPage() {
   const [apiKey, setApiKey] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [threshold, setThreshold] = useState("80");
+  const [webhookSaved, setWebhookSaved] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -17,6 +20,14 @@ export default function SettingsPage() {
     if (savedKey) {
       setApiKey(savedKey);
     }
+    
+    // Fetch webhook
+    getWebhookSettings().then(res => {
+      if (res && res.url) {
+        setWebhookUrl(res.url);
+        setThreshold(res.threshold.toString());
+      }
+    });
   }, []);
 
   const handleSave = (e: React.FormEvent) => {
@@ -28,6 +39,13 @@ export default function SettingsPage() {
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleSaveWebhook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await saveWebhookSettings(webhookUrl, parseInt(threshold) || 80);
+    setWebhookSaved(true);
+    setTimeout(() => setWebhookSaved(false), 3000);
   };
 
   if (!isClient) return null;
@@ -72,6 +90,57 @@ export default function SettingsPage() {
                   Simpan Kunci API
                 </Button>
                 {saved && (
+                  <span className="flex items-center text-green-400 text-sm animate-in fade-in">
+                    <CheckCircle2 className="w-4 h-4 mr-1" />
+                    Tersimpan!
+                  </span>
+                )}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Webhook Settings */}
+        <Card className="bg-[#111827] border-slate-800 shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-xl text-white flex items-center">
+              <Webhook className="w-5 h-5 mr-2 text-teal-500" />
+              Notifikasi Webhook
+            </CardTitle>
+            <CardDescription className="text-slate-400">
+              Terima pemberitahuan saat skor analisis kurang dari batas tertentu (Threshold). Berguna untuk monitoring berkelanjutan.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSaveWebhook} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Webhook URL (Discord/Slack/dll)</label>
+                <Input
+                  type="url"
+                  placeholder="https://..."
+                  value={webhookUrl}
+                  onChange={(e) => setWebhookUrl(e.target.value)}
+                  className="bg-slate-900 border-slate-700 text-white focus-visible:ring-teal-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Batas Minimal Skor (Threshold)</label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={threshold}
+                  onChange={(e) => setThreshold(e.target.value)}
+                  className="bg-slate-900 border-slate-700 text-white focus-visible:ring-teal-500"
+                />
+                <p className="text-xs text-slate-500">Notifikasi dikirim jika skor di bawah angka ini.</p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Button type="submit" className="bg-teal-600 hover:bg-teal-500 text-white font-semibold">
+                  <Bell className="w-4 h-4 mr-2" />
+                  Simpan Webhook
+                </Button>
+                {webhookSaved && (
                   <span className="flex items-center text-green-400 text-sm animate-in fade-in">
                     <CheckCircle2 className="w-4 h-4 mr-1" />
                     Tersimpan!

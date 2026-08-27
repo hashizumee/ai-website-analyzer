@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 import crypto from "crypto";
 import { db } from "@/lib/db";
+import { getUser } from "@/app/actions";
 import { calculateOverallScore, AnalysisResult, CategoryResult, AnalysisFinding } from "@/lib/scoring";
 
 export async function POST(req: Request) {
@@ -216,6 +217,26 @@ export async function POST(req: Request) {
       isFallback: false,
       createdAt: result.timestamp
     });
+    
+    // Webhook Logic
+    const user = await getUser();
+    const userId = user ? user.id : "anonymous";
+    const webhook = data.webhooks.find(w => (w as any).userId === userId);
+    
+    if (webhook && webhook.url && result.overallScore < webhook.threshold) {
+      try {
+        await fetch(webhook.url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `⚠️ **Website Analysis Alert**\nURL: ${result.url}\nScore: **${result.overallScore}** (Threshold: ${webhook.threshold})\nView Report: https://your-domain.com/report/${result.id}`
+          })
+        });
+      } catch (err) {
+        console.warn("Failed to trigger webhook", err);
+      }
+    }
+    
     db.write(data);
 
     return NextResponse.json(result);

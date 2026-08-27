@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 import Navigation from "@/components/Navigation";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "AI Website Analyzer",
@@ -23,13 +24,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#0b0f19] text-slate-100">
+      <body className="min-h-full flex flex-col bg-[#0b0f19] dark:bg-[#0b0f19] bg-slate-50 text-slate-900 dark:text-slate-100 transition-colors">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <Navigation />
         <main className="flex-1 w-full">
           {children}
         </main>
+        </ThemeProvider>
       </body>
     </html>
   );

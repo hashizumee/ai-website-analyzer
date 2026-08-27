@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { 
   Menu,
   X,
@@ -10,13 +11,21 @@ import {
   History, 
   Settings, 
   Sparkles, 
-  PieChart
+  PieChart,
+  Moon,
+  Sun
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const menuItems = [
     {
@@ -58,6 +67,18 @@ export default function Navigation() {
             <span className="text-xl font-bold tracking-tight text-white hidden sm:block">
               AI Analyzer <span className="text-[10px] bg-teal-900/50 text-teal-400 px-1.5 py-0.5 rounded border border-teal-700/50 align-top ml-1">PRO</span>
             </span>
+          </div>
+          
+          <div className="ml-auto flex items-center">
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                aria-label="Toggle Dark Mode"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+            )}
           </div>
         </div>
       </header>
