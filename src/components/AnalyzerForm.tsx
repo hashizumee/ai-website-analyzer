@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Loader2, FileText, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Loader2, FileText, ChevronDown, ChevronUp, UploadCloud, CheckCircle } from "lucide-react";
 import { z } from "zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -16,6 +16,8 @@ export default function AnalyzerForm() {
   const [showPrd, setShowPrd] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [fileName, setFileName] = useState("");
   const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -54,6 +56,44 @@ export default function AnalyzerForm() {
       target += `&apiKey=${encodeURIComponent(savedKey)}`;
     }
     router.push(target);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+    
+    setIsUploading(true);
+    setFileName(file.name);
+    try {
+      if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/extract-pdf", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (data.text) {
+          setPrdContext(data.text);
+        } else {
+          setError(data.error || "Gagal mengekstrak PDF.");
+        }
+      } else {
+        // Assume text file
+        const text = await file.text();
+        setPrdContext(text);
+      }
+    } catch (err) {
+      setError("Gagal memproses file.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
   };
 
   return (
@@ -100,13 +140,59 @@ export default function AnalyzerForm() {
           
           {showPrd && (
             <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
-              <textarea
-                value={prdContext}
-                onChange={(e) => setPrdContext(e.target.value)}
-                placeholder="Tempel ringkasan PRD atau deskripsi fitur yang seharusnya ada di aplikasi ini. AI akan mengevaluasi apakah website memenuhi standar tersebut."
-                className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-slate-300 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500 min-h-[100px] resize-y text-sm"
-                disabled={isLoading}
-              />
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+                className="w-full border-2 border-dashed border-slate-700 hover:border-teal-500 bg-slate-900/30 rounded-xl p-6 text-center transition-colors flex flex-col items-center justify-center mb-4"
+              >
+                {isUploading ? (
+                  <div className="text-slate-400 flex flex-col items-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-teal-400 mb-2" />
+                    <span>Membaca file {fileName}...</span>
+                  </div>
+                ) : fileName ? (
+                  <div className="text-emerald-400 flex flex-col items-center">
+                    <CheckCircle className="w-8 h-8 mb-2" />
+                    <span>File dimuat: {fileName}</span>
+                    <button 
+                      type="button"
+                      onClick={() => { setFileName(""); setPrdContext(""); }}
+                      className="text-xs text-slate-400 mt-2 hover:text-red-400 underline"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <UploadCloud className="w-8 h-8 text-slate-500 mb-2" />
+                    <p className="text-sm text-slate-400 mb-1">Tarik & Lepas file PRD (PDF, TXT, MD)</p>
+                    <p className="text-xs text-slate-500">Atau klik untuk memilih file</p>
+                    <input 
+                      type="file" 
+                      accept=".pdf,.txt,.md"
+                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                  </>
+                )}
+              </div>
+
+              {!fileName && (
+                <>
+                  <div className="flex items-center space-x-2 text-slate-500 text-xs uppercase font-bold tracking-widest my-2">
+                    <div className="flex-1 h-px bg-slate-800"></div>
+                    <span>ATAU PASTE MANUAL</span>
+                    <div className="flex-1 h-px bg-slate-800"></div>
+                  </div>
+                  <textarea
+                    value={prdContext}
+                    onChange={(e) => setPrdContext(e.target.value)}
+                    placeholder="Tempel ringkasan PRD atau deskripsi fitur yang seharusnya ada di aplikasi ini. AI akan mengevaluasi apakah website memenuhi standar tersebut."
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-slate-300 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500 min-h-[100px] resize-y text-sm"
+                    disabled={isLoading}
+                  />
+                </>
+              )}
             </div>
           )}
 
