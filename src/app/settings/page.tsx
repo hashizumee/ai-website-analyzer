@@ -9,6 +9,7 @@ import { saveWebhookSettings, getWebhookSettings } from "./webhook-actions";
 
 export default function SettingsPage() {
   const [apiKey, setApiKey] = useState("");
+  const [saved, setSaved] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
   const [threshold, setThreshold] = useState("80");
   const [webhookSaved, setWebhookSaved] = useState(false);

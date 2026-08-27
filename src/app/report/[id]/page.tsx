@@ -46,7 +46,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
         <div className="bg-[#111827]/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl mb-8">
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="w-full md:w-1/3">
-              <ScoreCard score={report.overallScore} size="lg" />
+              <ScoreCard title="Skor Keseluruhan" score={report.overallScore} size="lg" />
             </div>
             
             <div className="w-full md:w-2/3">
@@ -76,10 +76,7 @@ export default async function ReportPage({ params }: { params: { id: string } })
 
         {/* AI Recommendations */}
         <AIRecommendations 
-          url={report.url}
-          score={report.overallScore}
-          metrics={metrics}
-          prdContext={report.prdContext}
+          analysisResult={report}
         />
       </div>
     </div>
