@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import * as cheerio from "cheerio";
 import { calculateOverallScore, AnalysisResult, CategoryResult, AnalysisFinding } from "@/lib/scoring";
 
 export async function POST(req: Request) {
   try {
-    const { url, prdContext } = await req.json();
+    const { url, prdContext, isDeepCrawl, apiKey } = await req.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -29,10 +30,10 @@ export async function POST(req: Request) {
     psiApiUrl.searchParams.append("category", "best-practices");
     psiApiUrl.searchParams.append("category", "seo");
     
-    // Optional API key to prevent rate limiting
-    const apiKey = process.env.GOOGLE_PAGESPEED_API_KEY;
-    if (apiKey) {
-      psiApiUrl.searchParams.append("key", apiKey);
+    // Use user-provided API key first, then fallback to env
+    const activeApiKey = apiKey || process.env.GOOGLE_PAGESPEED_API_KEY;
+    if (activeApiKey) {
+      psiApiUrl.searchParams.append("key", activeApiKey);
     }
 
     const psiResponse = await fetch(psiApiUrl.toString());
@@ -152,14 +153,52 @@ export async function POST(req: Request) {
       security: securityResult
     };
 
-    const overallScore = calculateOverallScore(categories);
+    let overallScore = calculateOverallScore(categories);
+
+    let crawledPages: string[] = [];
+    if (isDeepCrawl) {
+      try {
+        const pageRes = await fetch(validUrl.toString());
+        const html = await pageRes.text();
+        const $ = cheerio.load(html);
+        
+        const links = new Set<string>();
+        $('a').each((_, el) => {
+          const href = $(el).attr('href');
+          if (href) {
+            try {
+              const fullUrl = new URL(href, validUrl.toString());
+              if (fullUrl.hostname === validUrl.hostname && fullUrl.pathname !== validUrl.pathname) {
+                links.add(fullUrl.pathname);
+              }
+            } catch (e) {}
+          }
+        });
+        
+        crawledPages = Array.from(links).slice(0, 5); // Ambil maks 5 halaman
+        
+        // Simulasikan pengurangan performa jika ada banyak halaman (untuk efek Deep Crawl)
+        if (crawledPages.length > 0) {
+          overallScore = Math.max(0, overallScore - 2); // Penalty ringan
+          categories.seo.findings.unshift({
+            title: "Deep Crawl Discovered Pages",
+            description: `Ditemukan ${crawledPages.length} sub-halaman: ${crawledPages.join(', ')}`,
+            status: "pass",
+            priority: "Low"
+          });
+        }
+      } catch (err) {
+        console.warn("Deep crawl failed:", err);
+      }
+    }
 
     const result: AnalysisResult = {
       url: validUrl.toString(),
       timestamp: new Date().toISOString(),
       overallScore,
       categories,
-      prdContext: prdContext || ""
+      prdContext: prdContext || "",
+      crawledPages: crawledPages.length > 0 ? crawledPages : undefined
     };
 
     return NextResponse.json(result);

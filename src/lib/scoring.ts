@@ -24,6 +24,7 @@ export interface AnalysisResult {
   };
   isFallback?: boolean;
   prdContext?: string;
+  crawledPages?: string[];
 }
 
 export function calculateOverallScore(categories: AnalysisResult['categories']): number {

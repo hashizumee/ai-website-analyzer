@@ -13,6 +13,8 @@ function ResultsContent() {
   const searchParams = useSearchParams();
   const url = searchParams.get("url");
   const prdContext = searchParams.get("prdContext");
+  const isDeepCrawl = searchParams.get("deepCrawl") === "true";
+  const apiKey = searchParams.get("apiKey");
 
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ function ResultsContent() {
         const res = await fetch(`/api/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url, prdContext }),
+          body: JSON.stringify({ url, prdContext, isDeepCrawl, apiKey }),
         });
 
         if (!res.ok) {

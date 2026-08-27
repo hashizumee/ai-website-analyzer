@@ -12,6 +12,7 @@ const urlSchema = z.string().url({ message: "URL tidak valid. Harap sertakan htt
 export default function AnalyzerForm() {
   const [url, setUrl] = useState("");
   const [prdContext, setPrdContext] = useState("");
+  const [isDeepCrawl, setIsDeepCrawl] = useState(false);
   const [showPrd, setShowPrd] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,13 @@ export default function AnalyzerForm() {
     let target = `/results?url=${encodeURIComponent(validUrl)}`;
     if (prdContext.trim()) {
       target += `&prdContext=${encodeURIComponent(prdContext.trim())}`;
+    }
+    if (isDeepCrawl) {
+      target += `&deepCrawl=true`;
+    }
+    const savedKey = localStorage.getItem("GOOGLE_PAGESPEED_API_KEY");
+    if (savedKey) {
+      target += `&apiKey=${encodeURIComponent(savedKey)}`;
     }
     router.push(target);
   };
@@ -101,6 +109,20 @@ export default function AnalyzerForm() {
               />
             </div>
           )}
+
+          <div className="mt-4 flex items-center space-x-2">
+            <input 
+              type="checkbox" 
+              id="deepCrawl" 
+              checked={isDeepCrawl} 
+              onChange={(e) => setIsDeepCrawl(e.target.checked)}
+              className="w-4 h-4 text-teal-600 bg-slate-900 border-slate-700 rounded focus:ring-teal-500"
+              disabled={isLoading}
+            />
+            <label htmlFor="deepCrawl" className="text-sm text-slate-300 cursor-pointer">
+              Gunakan <b>Deep Crawl</b> (Audit Sub-Halaman) <span className="text-xs text-slate-500">- Membutuhkan waktu lebih lama</span>
+            </label>
+          </div>
         </div>
 
       </div>

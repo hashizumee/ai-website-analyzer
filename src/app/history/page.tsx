@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { HistoryItem, getHistory, clearHistory } from "@/lib/history";
-import { History, ArrowRight, Trash2, Globe, Clock, LayoutDashboard } from "lucide-react";
+import { History, ArrowRight, Trash2, Globe, Clock, LayoutDashboard, LineChart as LineChartIcon } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function HistoryPage() {
   const [historyData, setHistoryData] = useState<HistoryItem[]>([]);
@@ -59,7 +60,37 @@ export default function HistoryPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-8">
+            {/* Chart Section */}
+            {historyData.length >= 2 && (
+              <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center mb-6">
+                  <LineChartIcon className="w-6 h-6 mr-3 text-teal-400" />
+                  <h2 className="text-xl font-bold text-white">Tren Performa (Semua Audit)</h2>
+                </div>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={[...historyData].reverse().map(item => ({
+                      name: new Date(item.timestamp).toLocaleDateString("id-ID", { month: "short", day: "numeric" }),
+                      Score: item.overallScore,
+                      url: item.url.replace(/^https?:\/\//, '')
+                    }))}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                      <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                      <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px' }}
+                        itemStyle={{ color: '#2dd4bf' }}
+                        labelStyle={{ color: '#94a3b8' }}
+                      />
+                      <Line type="monotone" dataKey="Score" stroke="#2dd4bf" strokeWidth={3} dot={{ fill: '#0f172a', strokeWidth: 2 }} activeDot={{ r: 6, fill: '#2dd4bf' }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {historyData.map((item, index) => {
               const date = new Date(item.timestamp);
               const scoreColor = item.overallScore >= 90 ? "text-emerald-400" : item.overallScore >= 50 ? "text-amber-400" : "text-rose-400";
@@ -99,6 +130,7 @@ export default function HistoryPage() {
                 </div>
               );
             })}
+            </div>
           </div>
         )}
       </div>
