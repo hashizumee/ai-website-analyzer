@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import * as cheerio from "cheerio";
+import crypto from "crypto";
+import { db } from "@/lib/db";
 import { calculateOverallScore, AnalysisResult, CategoryResult, AnalysisFinding } from "@/lib/scoring";
 
 export async function POST(req: Request) {
@@ -193,6 +195,7 @@ export async function POST(req: Request) {
     }
 
     const result: AnalysisResult = {
+      id: crypto.randomUUID(),
       url: validUrl.toString(),
       timestamp: new Date().toISOString(),
       overallScore,
@@ -200,6 +203,20 @@ export async function POST(req: Request) {
       prdContext: prdContext || "",
       crawledPages: crawledPages.length > 0 ? crawledPages : undefined
     };
+
+    // Save to DB
+    const data = db.read();
+    data.reports.push({
+      id: result.id as string,
+      url: result.url,
+      overallScore: result.overallScore,
+      categories: result.categories,
+      prdContext: result.prdContext,
+      crawledPages: result.crawledPages,
+      isFallback: false,
+      createdAt: result.timestamp
+    });
+    db.write(data);
 
     return NextResponse.json(result);
   } catch (error: any) {

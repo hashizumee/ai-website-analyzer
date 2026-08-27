@@ -2,27 +2,33 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { HistoryItem, getHistory, clearHistory } from "@/lib/history";
+import { AnalysisReportRecord } from "@/lib/db";
 import { History, ArrowRight, Trash2, Globe, Clock, LayoutDashboard, LineChart as LineChartIcon } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function HistoryPage() {
-  const [historyData, setHistoryData] = useState<HistoryItem[]>([]);
+  const [historyData, setHistoryData] = useState<AnalysisReportRecord[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
-    setHistoryData(getHistory());
+    fetch("/api/history")
+      .then(res => res.json())
+      .then(data => {
+        setHistoryData(data);
+        setLoading(false);
+      });
   }, []);
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus semua riwayat analisis?")) {
-      clearHistory();
+      await fetch("/api/history", { method: "DELETE" });
       setHistoryData([]);
     }
   };
 
-  if (!isClient) return null; // Prevents hydration mismatch
+  if (!isClient || loading) return null; // Prevents hydration mismatch
 
   return (
     <div className="min-h-screen bg-[#0b0f19] p-8">
@@ -71,7 +77,7 @@ export default function HistoryPage() {
                 <div className="h-[300px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={[...historyData].reverse().map(item => ({
-                      name: new Date(item.timestamp).toLocaleDateString("id-ID", { month: "short", day: "numeric" }),
+                      name: new Date(item.createdAt).toLocaleDateString("id-ID", { month: "short", day: "numeric" }),
                       Score: item.overallScore,
                       url: item.url.replace(/^https?:\/\//, '')
                     }))}>
@@ -92,7 +98,7 @@ export default function HistoryPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {historyData.map((item, index) => {
-              const date = new Date(item.timestamp);
+              const date = new Date(item.createdAt);
               const scoreColor = item.overallScore >= 90 ? "text-emerald-400" : item.overallScore >= 50 ? "text-amber-400" : "text-rose-400";
               
               return (
@@ -120,7 +126,7 @@ export default function HistoryPage() {
                       <div className={`text-2xl font-black ${scoreColor}`}>{item.overallScore}</div>
                     </div>
                     <Link 
-                      href={`/results?url=${encodeURIComponent(item.url)}`}
+                      href={`/report/${item.id}`}
                       className="inline-flex items-center text-sm font-medium text-teal-400 hover:text-teal-300 transition-colors group-hover:translate-x-1"
                     >
                       Buka Laporan
