@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
 export async function POST(req: Request) {
   try {
@@ -9,21 +9,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Analysis result is required" }, { status: 400 });
     }
 
-    // Menggunakan API Key Gemini dari environment variables
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Menggunakan API Key NaraRouter (nemotron-3-ultra)
+    const apiKey = process.env["nemotron-3-ultra"] || process.env.NEMOTRON_3_ULTRA;
     
     if (!apiKey) {
-      return NextResponse.json({ error: "GEMINI_API_KEY is not configured in .env" }, { status: 500 });
+      return NextResponse.json({ error: "NEMOTRON_3_ULTRA API Key is not configured in .env" }, { status: 500 });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const openai = new OpenAI({
+      apiKey: apiKey,
+      baseURL: "https://router.bynara.id/v1",
+    });
 
     // Prepare a condensed version of findings to send to AI
     const issuesToFix: any[] = [];
     for (const [category, data] of Object.entries(analysisResult.categories)) {
       const categoryData = data as any;
       categoryData.findings.forEach((finding: any) => {
-        if (finding.status === "fail" || finding.status === "warning") {
+        // Hanya kirimkan maksimum 10 issue yang fail ke AI untuk menghemat token
+        if (issuesToFix.length < 10 && (finding.status === "fail" || finding.status === "warning")) {
           issuesToFix.push({ category, ...finding });
         }
       });
@@ -33,8 +37,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ recommendations: "Tidak ada masalah signifikan yang ditemukan. Website Anda dalam kondisi sangat baik!" });
     }
 
-    const prdSection = analysisResult.prdContext 
-      ? `\nKonteks Tambahan (PRD / Deskripsi Aplikasi):\n"${analysisResult.prdContext}"\n\nInstruksi Tambahan: Harap evaluasi juga apakah metrik dan temuan di atas sudah sejalan dengan Konteks PRD ini.`
+    // Batasi PRD hingga 2000 karakter maksimal untuk menghemat token NaraRouter
+    const prdText = analysisResult.prdContext ? analysisResult.prdContext.substring(0, 2000) : "";
+    const prdSection = prdText 
+      ? `\nKonteks Tambahan (PRD / Deskripsi Aplikasi, Dibatasi):\n"${prdText}"\n\nInstruksi Tambahan: Harap evaluasi juga apakah metrik dan temuan di atas sudah sejalan dengan Konteks PRD ini.`
       : "";
 
     const prompt = `
@@ -52,14 +58,15 @@ Tugas Anda:
 5. Jangan berikan salam pengantar atau penutup, langsung berikan panduan solusinya.
 `;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: "Anda adalah asisten AI yang ahli dalam audit website dan pengembangan web."
+    const response = await openai.chat.completions.create({
+      model: "nemotron-3-ultra",
+      messages: [
+        { role: "system", content: "Anda adalah asisten AI yang ahli dalam audit website dan pengembangan web." },
+        { role: "user", content: prompt }
+      ]
     });
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text() || "Gagal mendapatkan respons dari model.";
+    const text = response.choices[0]?.message?.content || "Gagal mendapatkan respons dari model.";
 
     return NextResponse.json({ recommendations: text });
   } catch (error: any) {
