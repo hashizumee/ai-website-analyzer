@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(req: Request) {
   try {
@@ -9,17 +9,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Analysis result is required" }, { status: 400 });
     }
 
-    // Menggunakan API Key yang diberikan (hardcoded untuk kemudahan deploy Netlify)
-    const apiKey = process.env.NARA_API_KEY || "sk-nry-acDQg2dz38mhOwno_ttdAQY8ntm4ByTGfluIxPGE1jA";
+    // Menggunakan API Key Gemini dari environment variables
+    const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
-      return NextResponse.json({ error: "NARA_API_KEY is not configured" }, { status: 500 });
+      return NextResponse.json({ error: "GEMINI_API_KEY is not configured in .env" }, { status: 500 });
     }
 
-    const openai = new OpenAI({
-      apiKey: apiKey,
-      baseURL: "https://router.bynara.id/v1",
-    });
+    const genAI = new GoogleGenerativeAI(apiKey);
 
     // Prepare a condensed version of findings to send to AI
     const issuesToFix: any[] = [];
@@ -55,15 +52,14 @@ Tugas Anda:
 5. Jangan berikan salam pengantar atau penutup, langsung berikan panduan solusinya.
 `;
 
-    const response = await openai.chat.completions.create({
-      model: "ox-alpha",
-      messages: [
-        { role: "system", content: "Anda adalah asisten AI yang ahli dalam audit website dan pengembangan web." },
-        { role: "user", content: prompt }
-      ]
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: "Anda adalah asisten AI yang ahli dalam audit website dan pengembangan web."
     });
 
-    const text = response.choices[0]?.message?.content || "Gagal mendapatkan respons dari model.";
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text() || "Gagal mendapatkan respons dari model.";
 
     return NextResponse.json({ recommendations: text });
   } catch (error: any) {
