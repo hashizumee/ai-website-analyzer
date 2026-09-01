@@ -45,6 +45,12 @@ export default function Navigation() {
       href: "/compare",
       icon: <PieChart className="w-5 h-5" />,
       description: "Bandingkan 2 Website"
+    },
+    {
+      name: "Pengaturan",
+      href: "/settings",
+      icon: <Settings className="w-5 h-5" />,
+      description: "API Key & Webhook"
     }
   ];
 
