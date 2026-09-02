@@ -89,19 +89,19 @@ function ResultsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <main className="p-8 space-y-8 max-w-6xl mx-auto">
         <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-2">Hasil Analisis</h1>
-            <p className="text-sm text-slate-400 truncate max-w-full">
+            <h1 className="text-2xl font-bold text-foreground mb-2">Hasil Analisis</h1>
+            <p className="text-sm text-muted-foreground truncate max-w-full">
               {data.url}
             </p>
           </div>
 
           <button 
             onClick={() => window.print()}
-            className="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-700 w-fit"
+            className="inline-flex items-center space-x-2 bg-accent hover:bg-accent/80 text-foreground px-4 py-2 rounded-lg transition-colors border border-border w-fit"
           >
             <Printer className="w-4 h-4" />
             <span className="font-medium text-sm">Cetak Laporan</span>
@@ -143,7 +143,7 @@ function ResultsContent() {
 
         {/* Detailed Findings */}
         <div className="space-y-6">
-          <h3 className="text-xl font-bold text-slate-200 mt-8 mb-4">Detail Temuan</h3>
+          <h3 className="text-xl font-bold text-foreground mt-8 mb-4">Detail Temuan</h3>
           
           <CategorySection title="SEO Analysis" result={data.categories.seo} />
           <CategorySection title="Performance" result={data.categories.performance} />

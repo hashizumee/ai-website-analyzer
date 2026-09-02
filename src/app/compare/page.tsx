@@ -84,43 +84,43 @@ export default function ComparePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center">
+          <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center justify-center">
             <PieChart className="w-8 h-8 mr-3 text-blue-400" />
             Komparasi Website
           </h1>
-          <p className="text-slate-400">Bandingkan metrik teknis dua website secara langsung *(head-to-head)*.</p>
+          <p className="text-muted-foreground">Bandingkan metrik teknis dua website secara langsung *(head-to-head)*.</p>
         </div>
 
         {/* Compare Form */}
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl mb-12 relative overflow-hidden">
+        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-2xl mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px]" />
           <form onSubmit={handleCompare} className="relative z-10 flex flex-col space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-300 ml-1">Website A</label>
+                <label className="text-sm font-semibold text-foreground ml-1">Website A</label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <Input 
                     placeholder="https://kompetitor1.com"
                     value={url1}
                     onChange={(e) => setUrl1(e.target.value)}
-                    className="pl-12 h-14 bg-[#0b0f19] border-slate-700 text-white rounded-xl focus-visible:ring-blue-500"
+                    className="pl-12 h-14 bg-background border-border text-foreground rounded-xl focus-visible:ring-blue-500"
                     disabled={loading}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-300 ml-1">Website B</label>
+                <label className="text-sm font-semibold text-foreground ml-1">Website B</label>
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <Input 
                     placeholder="https://kompetitor2.com"
                     value={url2}
                     onChange={(e) => setUrl2(e.target.value)}
-                    className="pl-12 h-14 bg-[#0b0f19] border-slate-700 text-white rounded-xl focus-visible:ring-blue-500"
+                    className="pl-12 h-14 bg-background border-border text-foreground rounded-xl focus-visible:ring-blue-500"
                     disabled={loading}
                   />
                 </div>

@@ -24,17 +24,17 @@ export default async function ReportPage({ params }: { params: { id: string } })
   ];
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] p-8 text-slate-100 font-sans relative">
+    <div className="min-h-screen bg-background p-8 text-foreground font-sans relative">
       {/* Background decorations */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-teal-900/20 blur-[120px]"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[120px]"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-teal-500/10 dark:bg-teal-900/20 blur-[120px]"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/10 dark:bg-blue-900/20 blur-[120px]"></div>
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10" id="report-content">
         {/* Header Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <Link href="/history" className="inline-flex items-center text-slate-400 hover:text-teal-400 transition-colors w-fit">
+          <Link href="/history" className="inline-flex items-center text-muted-foreground hover:text-teal-500 transition-colors w-fit">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Kembali ke Riwayat
           </Link>

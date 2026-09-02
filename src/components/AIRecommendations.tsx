@@ -41,10 +41,10 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
 
   if (loading) {
     return (
-      <Card className="border-slate-800 bg-[#111827]">
+      <Card className="border-border bg-card">
         <CardContent className="p-8 flex flex-col items-center justify-center space-y-4">
           <Loader2 className="w-8 h-8 animate-spin text-teal-500" />
-          <p className="text-sm font-medium text-slate-400 animate-pulse">NaraRouter AI sedang menganalisis temuan dan menyusun rekomendasi...</p>
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">NaraRouter AI sedang menganalisis temuan dan menyusun rekomendasi...</p>
         </CardContent>
       </Card>
     );
@@ -52,15 +52,15 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
 
   if (error) {
     return (
-      <Card className="border-slate-800 bg-[#111827]">
-        <CardContent className="p-6 flex flex-col items-center space-y-4 text-slate-400">
-          <div className="flex items-center space-x-3 text-red-400">
+      <Card className="border-border bg-card">
+        <CardContent className="p-6 flex flex-col items-center space-y-4 text-muted-foreground">
+          <div className="flex items-center space-x-3 text-red-500">
             <AlertTriangle className="w-5 h-5" />
             <p className="text-sm font-medium">Gagal memuat AI: {error}</p>
           </div>
           <button 
             onClick={fetchAI}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-md text-sm transition-colors"
+            className="px-4 py-2 bg-accent hover:bg-accent/80 text-foreground rounded-md text-sm transition-colors"
           >
             Coba Lagi
           </button>
@@ -70,15 +70,15 @@ export default function AIRecommendations({ analysisResult }: { analysisResult: 
   }
 
   return (
-    <Card className="border-slate-800 overflow-hidden shadow-2xl bg-[#111827]">
-      <CardHeader className="bg-gradient-to-r from-teal-900/50 to-slate-800 border-b border-slate-800/50">
-        <CardTitle className="flex items-center space-x-2 text-lg text-white">
-          <Sparkles className="w-5 h-5 text-teal-400" />
+    <Card className="border-border overflow-hidden shadow-2xl bg-card">
+      <CardHeader className="bg-teal-500/10 dark:bg-gradient-to-r dark:from-teal-900/50 dark:to-slate-800 border-b border-border">
+        <CardTitle className="flex items-center space-x-2 text-lg text-foreground">
+          <Sparkles className="w-5 h-5 text-teal-500" />
           <span>Rekomendasi AI</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="prose prose-sm md:prose-base max-w-none prose-invert prose-headings:font-semibold prose-a:text-teal-400">
+        <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-teal-500">
           <ReactMarkdown>{recommendations}</ReactMarkdown>
         </div>
       </CardContent>

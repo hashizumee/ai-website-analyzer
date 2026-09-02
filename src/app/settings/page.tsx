@@ -52,38 +52,38 @@ export default function SettingsPage() {
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-3xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+          <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center">
             <Settings className="w-8 h-8 mr-3 text-teal-400" />
             Pengaturan (Settings)
           </h1>
-          <p className="text-slate-400">Atur preferensi aplikasi dan konfigurasi kunci API Anda di sini.</p>
+          <p className="text-muted-foreground">Atur preferensi aplikasi dan konfigurasi kunci API Anda di sini.</p>
         </div>
 
-        <Card className="bg-[#111827] border-slate-800 shadow-xl">
+        <Card className="bg-card border-border shadow-xl">
           <CardHeader>
-            <CardTitle className="text-xl text-white flex items-center">
+            <CardTitle className="text-xl text-foreground flex items-center">
               <Key className="w-5 h-5 mr-2 text-teal-500" />
-              Kunci API Kustom (Bring Your Own Key)
+              API Key Google PageSpeed
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-muted-foreground">
               Aplikasi ini menggunakan API gratis Google PageSpeed yang memiliki limit (kuota) ketat. 
-              Jika kuota habis, aplikasi terpaksa merender <b>Simulation Mode (dummy data)</b>. <br/><br/>
+              Jika kuota habis, aplikasi terpaksa menampilkan <b>Layar Error Limit API</b>. <br/><br/>
               Untuk menghindari hal ini, Anda dapat memasukkan kunci API PageSpeed Anda sendiri. Kunci ini hanya disimpan di peramban (browser) Anda.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Google PageSpeed API Key</label>
+                <label className="text-sm font-medium text-foreground">Google PageSpeed API Key</label>
                 <Input
                   type="password"
                   placeholder="Masukkan Kunci API Anda (mulai dengan AIzaSy...)"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="bg-slate-900 border-slate-700 text-white focus-visible:ring-teal-500"
+                  className="bg-background border-border text-foreground focus-visible:ring-teal-500"
                 />
               </div>
               <div className="flex items-center space-x-4">
@@ -102,39 +102,39 @@ export default function SettingsPage() {
         </Card>
 
         {/* Webhook Settings */}
-        <Card className="bg-[#111827] border-slate-800 shadow-xl">
+        <Card className="bg-card border-border shadow-xl">
           <CardHeader>
-            <CardTitle className="text-xl text-white flex items-center">
+            <CardTitle className="text-xl text-foreground flex items-center">
               <Webhook className="w-5 h-5 mr-2 text-teal-500" />
               Notifikasi Webhook
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-muted-foreground">
               Terima pemberitahuan saat skor analisis kurang dari batas tertentu (Threshold). Berguna untuk monitoring berkelanjutan.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSaveWebhook} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Webhook URL (Discord/Slack/dll)</label>
+                <label className="text-sm font-medium text-foreground">Webhook URL (Discord/Slack/dll)</label>
                 <Input
                   type="url"
                   placeholder="https://..."
                   value={webhookUrl}
                   onChange={(e) => setWebhookUrl(e.target.value)}
-                  className="bg-slate-900 border-slate-700 text-white focus-visible:ring-teal-500"
+                  className="bg-background border-border text-foreground focus-visible:ring-teal-500"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">Batas Minimal Skor (Threshold)</label>
+                <label className="text-sm font-medium text-foreground">Batas Minimal Skor (Threshold)</label>
                 <Input
                   type="number"
                   min="0"
                   max="100"
                   value={threshold}
                   onChange={(e) => setThreshold(e.target.value)}
-                  className="bg-slate-900 border-slate-700 text-white focus-visible:ring-teal-500"
+                  className="bg-background border-border text-foreground focus-visible:ring-teal-500"
                 />
-                <p className="text-xs text-slate-500">Notifikasi dikirim jika skor di bawah angka ini.</p>
+                <p className="text-xs text-muted-foreground">Notifikasi dikirim jika skor di bawah angka ini.</p>
               </div>
               <div className="flex items-center space-x-4">
                 <Button type="submit" className="bg-teal-600 hover:bg-teal-500 text-white font-semibold">

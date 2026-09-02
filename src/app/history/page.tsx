@@ -31,15 +31,15 @@ export default function HistoryPage() {
   if (!isClient || loading) return null; // Prevents hydration mismatch
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+            <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center">
               <History className="w-8 h-8 mr-3 text-teal-400" />
               Riwayat Analisis
             </h1>
-            <p className="text-slate-400">Daftar website yang pernah Anda audit sebelumnya. Data ini disimpan aman secara lokal di perangkat Anda.</p>
+            <p className="text-muted-foreground">Daftar website yang pernah Anda audit sebelumnya. Data ini disimpan aman secara lokal di perangkat Anda.</p>
           </div>
           
           {historyData.length > 0 && (
@@ -54,10 +54,10 @@ export default function HistoryPage() {
         </div>
 
         {historyData.length === 0 ? (
-          <div className="bg-[#111827] border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center">
-            <LayoutDashboard className="w-16 h-16 text-slate-700 mb-4" />
-            <h2 className="text-xl font-bold text-slate-300 mb-2">Belum ada riwayat</h2>
-            <p className="text-slate-500 mb-6">Mulai audit website pertama Anda sekarang untuk melihat riwayat di sini.</p>
+          <div className="bg-card border border-border rounded-2xl p-12 text-center flex flex-col items-center">
+            <LayoutDashboard className="w-16 h-16 text-muted-foreground mb-4" />
+            <h2 className="text-xl font-bold text-foreground mb-2">Belum ada riwayat</h2>
+            <p className="text-muted-foreground mb-6">Mulai audit website pertama Anda sekarang untuk melihat riwayat di sini.</p>
             <Link 
               href="/"
               className="bg-teal-500 hover:bg-teal-400 text-teal-950 font-bold px-6 py-2.5 rounded-lg transition-colors"
