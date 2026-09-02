@@ -93,24 +93,23 @@ export async function POST(req: Request) {
     };
 
     const seoResult: CategoryResult = {
-      score: Math.round(lh.categories.seo.score * 100),
-      findings: mapAuditsToFindings(lh.categories.seo.auditRefs)
+      score: Math.round((lh.categories.seo?.score || 0) * 100),
+      findings: mapAuditsToFindings(lh.categories.seo?.auditRefs || [])
     };
 
     const performanceResult: CategoryResult = {
-      score: Math.round(lh.categories.performance.score * 100),
-      findings: mapAuditsToFindings(lh.categories.performance.auditRefs)
+      score: Math.round((lh.categories.performance?.score || 0) * 100),
+      findings: mapAuditsToFindings(lh.categories.performance?.auditRefs || [])
     };
 
     const accessibilityResult: CategoryResult = {
-      score: Math.round(lh.categories.accessibility.score * 100),
-      findings: mapAuditsToFindings(lh.categories.accessibility.auditRefs)
+      score: Math.round((lh.categories.accessibility?.score || 0) * 100),
+      findings: mapAuditsToFindings(lh.categories.accessibility?.auditRefs || [])
     };
 
-    // Lighthouse 'Best Practices' maps closely to our 'Security' & Code Quality checks
     const securityResult: CategoryResult = {
-      score: Math.round(lh.categories['best-practices'].score * 100),
-      findings: mapAuditsToFindings(lh.categories['best-practices'].auditRefs)
+      score: Math.round((lh.categories["best-practices"]?.score || 0) * 100),
+      findings: mapAuditsToFindings(lh.categories["best-practices"]?.auditRefs || [])
     };
 
     const categories = {
