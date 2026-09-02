@@ -98,13 +98,6 @@ function ResultsContent() {
               {data.url}
             </p>
           </div>
-          
-          {data.isFallback && (
-            <div className="text-xs text-amber-500/70 border border-amber-500/20 bg-amber-500/5 px-3 py-1.5 rounded-md flex items-center space-x-2">
-              <AlertCircle className="w-3.5 h-3.5" />
-              <span>Sistem sedang mencapai batas limit API. Menampilkan hasil analisis standar.</span>
-            </div>
-          )}
 
           <button 
             onClick={() => window.print()}

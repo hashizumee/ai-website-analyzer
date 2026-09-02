@@ -41,47 +41,11 @@ export async function POST(req: Request) {
 
     const psiResponse = await fetch(psiApiUrl.toString());
     if (!psiResponse.ok) {
-      console.warn("PageSpeed API Error or Quota Exceeded. Using fallback data.");
-      
-      // Fallback Data for UI Demonstration purposes when quota is exceeded
-      const dummyResult: AnalysisResult = {
-        url: validUrl.toString(),
-        timestamp: new Date().toISOString(),
-        overallScore: 82,
-        isFallback: true,
-        prdContext: prdContext || "",
-        categories: {
-          seo: {
-            score: 90,
-            findings: [
-              { title: "Meta description valid", description: "Meta deskripsi ditemukan", status: "pass", priority: "High" },
-              { title: "Missing H1", description: "Halaman tidak memiliki tag H1", status: "fail", priority: "Critical" }
-            ]
-          },
-          performance: {
-            score: 65,
-            findings: [
-              { title: "First Contentful Paint", description: "FCP lambat (3.2s)", status: "fail", priority: "Critical" },
-              { title: "Minify JavaScript", description: "Dapat menghemat 120KB", status: "warning", priority: "High" }
-            ]
-          },
-          accessibility: {
-            score: 95,
-            findings: [
-              { title: "Image Elements have [alt]", description: "Semua gambar memiliki alt teks", status: "pass", priority: "High" }
-            ]
-          },
-          security: {
-            score: 80,
-            findings: [
-              { title: "Uses HTTPS", description: "Koneksi aman", status: "pass", priority: "Critical" },
-              { title: "No browser errors", description: "Terdapat 1 error di console", status: "warning", priority: "Medium" }
-            ]
-          }
-        }
-      };
-      
-      return NextResponse.json(dummyResult);
+      console.warn("PageSpeed API Error or Quota Exceeded.");
+      return NextResponse.json(
+        { error: "Limit penggunaan API Google PageSpeed telah tercapai. Silakan coba beberapa saat lagi atau masukkan API Key di menu Pengaturan." },
+        { status: 429 }
+      );
     }
 
     const psiData = await psiResponse.json();
