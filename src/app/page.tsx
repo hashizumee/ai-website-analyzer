@@ -121,17 +121,7 @@ export default function Home() {
           <p className="text-muted-foreground mb-8 max-w-xl">
             Jangan biarkan skor performa dan SEO yang buruk menghambat konversi Anda. Mulai analisis gratis sekarang.
           </p>
-          <button 
-            onClick={() => {
-              document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' });
-              setTimeout(() => {
-                document.querySelector('input')?.focus();
-              }, 500);
-            }}
-            className="px-8 py-3 bg-foreground text-background font-semibold rounded-full hover:bg-foreground/90 transition-colors"
-          >
-            Mulai Analisis Sekarang
-          </button>
+          <ScrollToTopButton />
         </div>
       </section>
       
