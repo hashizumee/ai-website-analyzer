@@ -20,8 +20,8 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl text-center relative z-10 flex flex-col items-center">
           
           <div className="inline-flex items-center space-x-2 bg-teal-500/10 dark:bg-teal-900/30 border border-teal-500/20 rounded-full px-4 py-1.5 mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-teal-400 animate-pulse"></span>
-            <span className="text-sm font-medium text-teal-600 dark:text-teal-300">NaraRouter AI Powered</span>
+            <Sparkles className="w-4 h-4 text-teal-400" />
+            <span className="text-sm font-medium text-teal-600 dark:text-teal-300">Ditenagai oleh NaraRouter AI & Google Lighthouse</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">
@@ -30,12 +30,12 @@ export default function Home() {
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            AI Menganalisis SEO, Performa, Aksesibilitas, dan Praktik Terbaik dalam hitungan detik. Temukan skor website Anda dan temukan langkah demi langkah cara memperbaikinya.
+            AI Website Analyzer PRO memindai ribuan metrik teknis dalam hitungan detik. Dapatkan skor akurat dan instruksi perbaikan langkah-demi-langkah dari kecerdasan buatan.
           </p>
 
           {/* Form Input */}
           <div className="w-full max-w-3xl mb-8">
-            <div className="p-1 rounded-[24px] bg-gradient-to-b from-teal-500/30 to-slate-800 shadow-[0_0_40px_rgba(20,184,166,0.15)] relative group hover:shadow-[0_0_50px_rgba(20,184,166,0.25)] transition-shadow duration-500">
+            <div className="p-1 rounded-[24px] bg-gradient-to-b from-teal-500/30 to-muted dark:to-slate-800 shadow-[0_0_40px_rgba(20,184,166,0.15)] relative group hover:shadow-[0_0_50px_rgba(20,184,166,0.25)] transition-shadow duration-500">
               <div className="bg-card rounded-[22px] p-2">
                 <AnalyzerForm />
               </div>
