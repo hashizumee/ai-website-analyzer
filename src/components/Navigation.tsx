@@ -76,15 +76,7 @@ export default function Navigation() {
           </div>
           
           <div className="ml-auto flex items-center">
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
-                aria-label="Toggle Dark Mode"
-              >
-                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
-            )}
+            {/* Theme toggle removed per user request */}
           </div>
         </div>
       </header>
