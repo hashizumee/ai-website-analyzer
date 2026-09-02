@@ -73,13 +73,13 @@ function ResultsContent() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full p-6 bg-red-50/50 border border-red-200 rounded-xl text-center space-y-4">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto" />
-          <h2 className="text-xl font-semibold text-red-700">Gagal Menganalisis</h2>
-          <p className="text-red-600/80 text-sm">{error}</p>
+        <div className="max-w-md w-full p-6 bg-red-950/30 border border-red-900/50 rounded-xl text-center space-y-4 shadow-lg shadow-red-900/10">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]" />
+          <h2 className="text-xl font-semibold text-red-400">Gagal Menganalisis</h2>
+          <p className="text-red-300/80 text-sm leading-relaxed">{error}</p>
           <button 
             onClick={() => window.history.back()}
-            className="px-4 py-2 bg-red-100 text-red-700 rounded-md font-medium hover:bg-red-200 transition-colors"
+            className="px-6 py-2 bg-red-950/50 text-red-400 border border-red-900/50 rounded-lg font-medium hover:bg-red-900/50 hover:text-red-300 transition-all duration-300"
           >
             Kembali
           </button>
