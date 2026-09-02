@@ -38,7 +38,11 @@ export interface DbSchema {
 function initDb(): DbSchema {
   if (!fs.existsSync(dbPath)) {
     const initial: DbSchema = { users: [], reports: [], webhooks: [] };
-    fs.writeFileSync(dbPath, JSON.stringify(initial, null, 2));
+    try {
+      fs.writeFileSync(dbPath, JSON.stringify(initial, null, 2));
+    } catch (err) {
+      console.warn("Failed to create local DB file (Read-only file system?):", err);
+    }
     return initial;
   }
   try {
@@ -49,7 +53,11 @@ function initDb(): DbSchema {
 }
 
 function saveDb(data: DbSchema) {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.warn("Failed to write to local DB (Read-only file system?):", err);
+  }
 }
 
 export const db = {
