@@ -32,10 +32,13 @@ function ResultsContent() {
 
     const fetchData = async () => {
       try {
+        const localApiKey = localStorage.getItem("psApiKey") || undefined;
+        const activeApiKey = apiKey || localApiKey;
+        
         const res = await fetch(`/api/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url, prdContext, isDeepCrawl, apiKey }),
+          body: JSON.stringify({ url, prdContext, isDeepCrawl, apiKey: activeApiKey }),
         });
 
         if (!res.ok) {
